@@ -21,3 +21,9 @@ cp .env.example .env
 ```
 docker-compose up -d
 ```
+
+## Database Seed
+
+```
+POST {{URL_HOST}}/seed
+```

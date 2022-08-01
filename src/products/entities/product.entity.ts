@@ -1,9 +1,11 @@
+import { Image } from './image.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -36,6 +38,12 @@ export class Product {
 
   @Column({ type: 'char', length: 10 })
   gender: string;
+
+  @OneToMany(() => Image, (image) => image.product, {
+    cascade: true,
+    eager: true,
+  })
+  images?: Image[];
 
   @CreateDateColumn({
     name: 'created_at',
