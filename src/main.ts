@@ -1,8 +1,9 @@
-import { HttpStatus, ValidationPipe } from '@nestjs/common';
+import { HttpStatus, Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
+  const loger = new Logger('Main');
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
 
@@ -16,6 +17,7 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(8080);
+  await app.listen(process.env.PORT || 3000);
+  loger.log(`Server running on port ${process.env.PORT || 3000}`);
 }
 bootstrap();
