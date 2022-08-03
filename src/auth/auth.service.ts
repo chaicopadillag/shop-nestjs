@@ -10,12 +10,15 @@ import * as bcrypt from 'bcrypt';
 import { CreateUSerDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { LoginDto } from './dto/login.dto';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly jwtService: JwtService,
   ) {}
 
   async login(loginDto: LoginDto) {
@@ -44,7 +47,12 @@ export class AuthService {
 
     delete user.password;
 
-    return user;
+    const token = await this.generateToken({
+      id: user.id,
+      email: user.email,
+    });
+
+    return { user, token };
   }
 
   async create(createUserDto: CreateUSerDto) {
@@ -60,10 +68,22 @@ export class AuthService {
 
       delete user.password;
 
-      return user;
+      const token = await this.generateToken({
+        id: user.id,
+        email: user.email,
+      });
+
+      return {
+        user,
+        token,
+      };
     } catch (error) {
       console.log(error);
       throw new BadRequestException('Error creating user');
     }
+  }
+
+  async generateToken(payload: JwtPayload) {
+    return await this.jwtService.sign(payload);
   }
 }
