@@ -15,12 +15,23 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { QueryDto } from 'src/common/dtos/query.dto';
 import { Auth } from 'src/auth/decorators';
 import { GetAuthUser } from '../auth/decorators/getAuthUser.decorator';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Product } from './entities';
 
+@ApiTags('Products')
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
+  @ApiResponse({
+    status: 200,
+    description: 'Successful operation',
+    type: Product,
+  })
+  @ApiResponse({ status: 422, description: 'Unprocessable entity' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @Auth('admin', 'cashier', 'user')
   create(@Body() createProductDto: CreateProductDto, @GetAuthUser() user) {
     return this.productsService.create(createProductDto, user);
