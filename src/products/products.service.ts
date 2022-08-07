@@ -23,7 +23,7 @@ export class ProductsService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto, user: any) {
     try {
       const { images = [], ...restProduct } = createProductDto;
 
@@ -34,6 +34,7 @@ export class ProductsService {
       const product = this.productRepository.create({
         ...restProduct,
         images: imagesDB,
+        user,
       });
 
       await this.productRepository.save(product);
@@ -74,13 +75,17 @@ export class ProductsService {
     };
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto) {
+  async update(id: string, updateProductDto: UpdateProductDto, user: any) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
       const { images, ...toUpdate } = updateProductDto;
-      const product = await this.productRepository.preload({ id, ...toUpdate });
+      const product = await this.productRepository.preload({
+        id,
+        ...toUpdate,
+        user,
+      });
 
       if (!product) {
         throw new BadRequestException('Product not found');

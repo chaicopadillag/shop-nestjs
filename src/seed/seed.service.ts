@@ -6,7 +6,7 @@ import { initialData } from './database/factory';
 export class SeedService {
   constructor(private readonly productService: ProductsService) {}
 
-  async run() {
+  async run(user: any) {
     this.productService.deleteAllProducts();
 
     const productSeeds = initialData.products;
@@ -14,7 +14,7 @@ export class SeedService {
     const productPromise = [];
 
     for (const product of productSeeds) {
-      productPromise.push(this.productService.create(product));
+      productPromise.push(this.productService.create(product, user));
     }
 
     await Promise.all(productPromise);

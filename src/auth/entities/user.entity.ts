@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Product } from 'src/products/entities';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('users')
 export class User {
@@ -22,4 +23,7 @@ export class User {
 
   @Column({ type: 'varchar', array: true, default: [] })
   roles: string[];
+
+  @OneToMany(() => Product, (product) => product.user)
+  products: Product[];
 }

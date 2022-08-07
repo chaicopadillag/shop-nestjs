@@ -5,10 +5,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { User } from 'src/auth/entities/user.entity';
 
 @Entity('products')
 export class Product {
@@ -58,6 +61,10 @@ export class Product {
     default: () => 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
+
+  @ManyToOne(() => User, (user) => user.products, { eager: true })
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 
   @BeforeInsert()
   createSlug() {
